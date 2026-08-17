@@ -35,5 +35,38 @@
 
             <!-- Đã sửa text từ Sign up thành Sign in cho đúng logic -->
             <button type="submit" class="btn-submit">Đăng nhập</button>
+            <!-- Liên kết nút đăng xuất ra ngoài -->
+           <!-- Script kiểm tra đúng/sai tài khoản -->
+    <script>
+        // 1. Danh sách tài khoản hợp lệ mẫu (Mô phỏng Database)
+        const validUsers = [
+            { email: "admin@novacompany.vn", pass: "123456", name: "Quản trị viên", role: "Admin" },
+        ];
+
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Lấy thông tin từ form
+            const emailInput = document.getElementById('email').value.trim();
+            const passInput = document.getElementById('password').value.trim();
+
+            // 2. Kiểm tra xem thông tin nhập vào có khớp với tài khoản nào không
+            const matchedUser = validUsers.find(user => user.email === emailInput && user.pass === passInput);
+
+            // 3. Xử lý kết quả
+            if (matchedUser) {
+                // ĐÚNG TÀI KHOẢN: Lưu thông tin người dùng vào trình duyệt
+                localStorage.setItem('userLoggedIn', matchedUser.name);
+                localStorage.setItem('userRole', matchedUser.role);
+
+                // Chuyển sang trang Dashboard
+                window.location.href = 'index.html';
+            } else {
+                // SAI TÀI KHOẢN: Báo lỗi và không cho chuyển trang
+                alert('Tài khoản hoặc mật khẩu không chính xác!');
+            }
+        });
+    </script>
+</body>
 </body>
 </html>

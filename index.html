@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng điều khiển - NovaHM</title>
+    <link rel="stylesheet" href="asset/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="layout-container">
+        <!-- 1. KHU VỰC LOGO -->
+        <div class="area-logo">
+            <span class="logo-icon">❖</span> NovaHM
+        </div>
+
+        <!-- 2. KHU VỰC HEADER (TITLE) -->
+        <header class="area-header">
+            <div class="header-title">
+                <h2>HỆ THỐNG QUẢN LÝ NHÂN SỰ</h2>
+            </div>
+            <div class="user-profile">
+                <i class="fa-regular fa-bell icon-btn"></i>
+                <img src="https://ui-avatars.com/api/?name=Admin+User&background=3b82f6&color=fff" alt="Avatar" class="avatar">
+                <span class="user-name">Quản trị viên</span>
+            </div>
+        </header>
+
+        <!-- 3. KHU VỰC LEFT (MENU CHÍNH) -->
+        <aside class="area-left">
+            <ul class="menu-list">
+                <li class="menu-item active">
+                    <a href="#"><i class="fa-solid fa-chart-pie"></i> <span>Tổng quan</span></a>
+                </li>
+
+                <!-- Menu Hồ sơ nhân viên -->
+                <li class="menu-item has-submenu">
+                    <a href="javascript:void(0)" class="menu-toggle">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Hồ sơ nhân viên</span>
+                        <i class="fa-solid fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#">Danh sách nhân viên</a></li>
+                        <li><a href="#">Thêm nhân viên mới</a></li>
+                        <li><a href="#">Hợp đồng lao động</a></li>
+                    </ul>
+                </li>
+
+                <!-- Menu Chấm công -->
+                <li class="menu-item has-submenu">
+                    <a href="javascript:void(0)" class="menu-toggle">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Chấm công</span>
+                        <i class="fa-solid fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#">Bảng chấm công ngày</a></li>
+                        <li><a href="#">Lịch sử ra/vào</a></li>
+                    </ul>
+                </li>
+
+                <!-- Menu Tính lương -->
+                <li class="menu-item has-submenu">
+                    <a href="javascript:void(0)" class="menu-toggle">
+                        <i class="fa-solid fa-calculator"></i>
+                        <span>Tính lương cơ bản</span>
+                        <i class="fa-solid fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#">Bảng tính lương tháng</a></li>
+                        <li><a href="#">Cấu hình lương</a></li>
+                    </ul>
+                </li>
+
+                <!-- Menu Quản lý ngày phép -->
+                <li class="menu-item has-submenu">
+                    <a href="javascript:void(0)" class="menu-toggle">
+                        <i class="fa-solid fa-mug-hot"></i>
+                        <span>Quản lý ngày phép</span>
+                        <i class="fa-solid fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#">Duyệt đơn nghỉ phép</a></li>
+                        <li><a href="#">Quỹ phép năm</a></li>
+                    </ul>
+                </li>
+
+                <li class="menu-item border-top">
+                    <a href="login.html" class="text-danger"><i class="fa-solid fa-right-from-bracket"></i> <span>Đăng xuất</span></a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 4. KHU VỰC MAIN (CONTENT CHÍNH) -->
+        <main class="area-main">
+            <!-- Thẻ thống kê -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon bg-blue"><i class="fa-solid fa-users"></i></div>
+                    <div class="stat-info">
+                        <h3>128</h3>
+                        <p>Tổng nhân viên</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-green"><i class="fa-solid fa-user-check"></i></div>
+                    <div class="stat-info">
+                        <h3>115</h3>
+                        <p>Chấm công hôm nay</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-purple"><i class="fa-solid fa-money-bill-wave"></i></div>
+                    <div class="stat-info">
+                        <h3>1.24 tỷ</h3>
+                        <p>Quỹ lương tháng này</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-orange"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                    <div class="stat-info">
+                        <h3>6</h3>
+                        <p>Đơn phép chờ duyệt</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bảng dữ liệu -->
+            <section class="data-section">
+                <div class="section-header">
+                    <h3>Yêu cầu nghỉ phép mới nhất</h3>
+                    <button class="btn-primary">+ Tạo đơn mới</button>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Mã NV</th>
+                            <th>Họ và tên</th>
+                            <th>Phòng ban</th>
+                            <th>Lý do nghỉ</th>
+                            <th>Số ngày</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>NV001</td>
+                            <td>Nguyễn Văn A</td>
+                            <td>Kỹ thuật</td>
+                            <td>Nghỉ bệnh</td>
+                            <td>1 ngày</td>
+                            <td><span class="badge badge-warning">Chờ duyệt</span></td>
+                        </tr>
+                        <tr>
+                            <td>NV042</td>
+                            <td>Trần Thị B</td>
+                            <td>Nhân sự</td>
+                            <td>Nghỉ việc riêng</td>
+                            <td>2 ngày</td>
+                            <td><span class="badge badge-success">Đã duyệt</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+
+        <!-- 5. KHU VỰC FOOTER -->
+        <footer class="area-footer">
+            <p>© 2026 StaffSync HRM System - Bản quyền thuộc về tụi tui </p>
+        </footer>
+    </div>
+    <footer class="area-footer">
+            <p>© 2026 StaffSync HRM System - Bản quyền thuộc về tụi tui</p>
+        </footer>
+    </div>
+    <script>
+        document.querySelectorAll('.menu-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                // Bật/tắt menu được click, giữ nguyên trạng thái các menu khác
+                this.parentElement.classList.toggle('open');
+            });
+        });
+    </script>
+</body>
+</html>
