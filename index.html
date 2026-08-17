@@ -11,9 +11,9 @@
 
     <div class="layout-container">
         <!-- 1. KHU VỰC LOGO -->
-        <div class="area-logo">
-            <span class="logo-icon">❖</span> NovaHM
-        </div>
+    <a href="index.html" class="area-logo">
+        <span class="logo-icon">❖</span> NovaHM
+    </a>
 
         <!-- 2. KHU VỰC HEADER (TITLE) -->
         <header class="area-header">
@@ -33,64 +33,66 @@
                 <li class="menu-item active">
                     <a href="#"><i class="fa-solid fa-chart-pie"></i> <span>Tổng quan</span></a>
                 </li>
+<!-- Menu Hồ sơ nhân viên -->
+<li class="menu-item has-submenu">
+    <a href="javascript:void(0)" class="menu-toggle">
+        <i class="fa-solid fa-users"></i>
+        <span>Hồ sơ nhân viên</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+    </a>
+    <ul class="submenu">
+        <li><a href="danhsachnhanvien.html">Danh sách nhân viên</a></li>
+        <li><a href="themnhanvien.html">Thêm nhân viên mới</a></li>
+        <li><a href="hopdong.html">Hợp đồng lao động</a></li>
+    </ul>
+</li>
 
-                <!-- Menu Hồ sơ nhân viên -->
-                <li class="menu-item has-submenu">
-                    <a href="javascript:void(0)" class="menu-toggle">
-                        <i class="fa-solid fa-users"></i>
-                        <span>Hồ sơ nhân viên</span>
-                        <i class="fa-solid fa-chevron-down arrow"></i>
-                    </a>
-                    <ul class="submenu">
-                        <li><a href="#">Danh sách nhân viên</a></li>
-                        <li><a href="#">Thêm nhân viên mới</a></li>
-                        <li><a href="#">Hợp đồng lao động</a></li>
-                    </ul>
-                </li>
+<!-- Menu Chấm công -->
+<li class="menu-item has-submenu">
+    <a href="javascript:void(0)" class="menu-toggle">
+        <i class="fa-solid fa-calendar-check"></i>
+        <span>Chấm công</span>  
+        <i class="fa-solid fa-chevron-down arrow"></i>
+    </a>
+    <ul class="submenu">
+        <li><a href="bangchamcong.html">Bảng chấm công ngày</a></li>
+        <li><a href="lichsuravao.html">Lịch sử ra/vào</a></li>
+    </ul>
+</li>
 
-                <!-- Menu Chấm công -->
-                <li class="menu-item has-submenu">
-                    <a href="javascript:void(0)" class="menu-toggle">
-                        <i class="fa-solid fa-calendar-check"></i>
-                        <span>Chấm công</span>
-                        <i class="fa-solid fa-chevron-down arrow"></i>
-                    </a>
-                    <ul class="submenu">
-                        <li><a href="#">Bảng chấm công ngày</a></li>
-                        <li><a href="#">Lịch sử ra/vào</a></li>
-                    </ul>
-                </li>
+<!-- Menu Tính lương -->
+<li class="menu-item has-submenu">
+    <a href="javascript:void(0)" class="menu-toggle">
+        <i class="fa-solid fa-calculator"></i>
+        <span>Tính lương cơ bản</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+    </a>
+    <ul class="submenu">
+        <li><a href="bangtinhluongthang.html">Bảng tính lương tháng</a></li>
+        <li><a href="cauhinhluong.html">Cấu hình lương</a></li>
+    </ul>
+</li>
 
-                <!-- Menu Tính lương -->
-                <li class="menu-item has-submenu">
-                    <a href="javascript:void(0)" class="menu-toggle">
-                        <i class="fa-solid fa-calculator"></i>
-                        <span>Tính lương cơ bản</span>
-                        <i class="fa-solid fa-chevron-down arrow"></i>
-                    </a>
-                    <ul class="submenu">
-                        <li><a href="#">Bảng tính lương tháng</a></li>
-                        <li><a href="#">Cấu hình lương</a></li>
-                    </ul>
-                </li>
+<!-- Menu Quản lý ngày phép -->
+<li class="menu-item has-submenu">
+    <a href="javascript:void(0)" class="menu-toggle">
+        <i class="fa-solid fa-mug-hot"></i>
+        <span>Quản lý ngày phép</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+    </a>
+    <ul class="submenu">
+        <li><a href="duyetdonphep.html">Duyệt đơn nghỉ phép</a></li>
+        <li><a href="quyphepnam.html">Quỹ phép năm</a></li>
+    </ul>
+</li>
 
-                <!-- Menu Quản lý ngày phép -->
-                <li class="menu-item has-submenu">
-                    <a href="javascript:void(0)" class="menu-toggle">
-                        <i class="fa-solid fa-mug-hot"></i>
-                        <span>Quản lý ngày phép</span>
-                        <i class="fa-solid fa-chevron-down arrow"></i>
-                    </a>
-                    <ul class="submenu">
-                        <li><a href="#">Duyệt đơn nghỉ phép</a></li>
-                        <li><a href="#">Quỹ phép năm</a></li>
-                    </ul>
-                </li>
-
-                <li class="menu-item border-top">
-                    <a href="login.html" class="text-danger"><i class="fa-solid fa-right-from-bracket"></i> <span>Đăng xuất</span></a>
-                </li>
-            </ul>
+<!-- Đăng xuất -->
+<li class="menu-item border-top">
+    <a href="login.html" class="text-danger">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Đăng xuất</span>
+    </a>
+</li>
         </aside>
 
         <!-- 4. KHU VỰC MAIN (CONTENT CHÍNH) -->

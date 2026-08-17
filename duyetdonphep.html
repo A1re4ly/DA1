@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duyệt đơn nghỉ phép - NovaHM</title>
+    <link rel="stylesheet" href="asset/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="layout-container">
+        <!-- 1. KHU VỰC LOGO -->
+        <div class="area-logo">
+            <span class="logo-icon">❖</span> NovaHM
+        </div>
+
+        <!-- 2. KHU VỰC HEADER -->
+        <header class="area-header">
+            <div class="header-title">
+                <h2>HỆ THỐNG QUẢN LÝ NHÂN SỰ</h2>
+            </div>
+            <div class="user-profile">
+                <i class="fa-regular fa-bell icon-btn"></i>
+                <img src="https://ui-avatars.com/api/?name=Admin+User&background=3b82f6&color=fff" alt="Avatar" class="avatar">
+                <span class="user-name">Quản trị viên</span>
+            </div>
+        </header>
+
+        <!-- 3. KHU VỰC LEFT (MENU CHÍNH) -->
+        <aside class="area-left">
+            <ul class="menu-list">
+                <li class="menu-item">
+                    <a href="index.html"><i class="fa-solid fa-chart-pie"></i> <span>Tổng quan</span></a>
+                </li>
+
+                <!-- Menu Hồ sơ nhân viên -->
+                <li class="menu-item has-submenu">
+                    <a href="javascript:void(0)" class="menu-toggle">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Hồ sơ nhân viên</span>
+                        <i class="fa-solid fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="danhsachnhanvien.html">Danh sách nhân viên</a></li>
+                        <li><a href="themnhanvien.html">Thêm nhân viên mới</a></li>
+                        <li><a href="hopdong.html">Hợp đồng lao động</a></li>
+                    </ul>
+                </li>
+
+                <!-- Menu Chấm công -->
+                <li class="menu-item has-submenu">
+                    <a href="javascript:void(0)" class="menu-toggle">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Chấm công</span>
+                        <i class="fa-solid fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="bangchamcong.html">Bảng chấm công ngày</a></li>
+                        <li><a href="lichsuravao.html">Lịch sử ra/vào</a></li>
+                    </ul>
+                </li>
+
+                <!-- Menu Tính lương -->
+                <li class="menu-item has-submenu">
+                    <a href="javascript:void(0)" class="menu-toggle">
+                        <i class="fa-solid fa-calculator"></i>
+                        <span>Tính lương cơ bản</span>
+                        <i class="fa-solid fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="bangtinhluongthang.html">Bảng tính lương tháng</a></li>
+                        <li><a href="cauhinhluong.html">Cấu hình lương</a></li>
+                    </ul>
+                </li>
+
+                <!-- Menu Quản lý ngày phép (Mở sẵn) -->
+                <li class="menu-item has-submenu open">
+                    <a href="javascript:void(0)" class="menu-toggle">
+                        <i class="fa-solid fa-mug-hot"></i>
+                        <span>Quản lý ngày phép</span>
+                        <i class="fa-solid fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li class="active"><a href="duyetdonphep.html">Duyệt đơn nghỉ phép</a></li>
+                        <li><a href="quyphepnam.html">Quỹ phép năm</a></li>
+                    </ul>
+                </li>
+
+                <li class="menu-item border-top">
+                    <a href="login.html" class="text-danger"><i class="fa-solid fa-right-from-bracket"></i> <span>Đăng xuất</span></a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 4. KHU VỰC MAIN (DUYỆT ĐƠN NGHỈ PHÉP) -->
+        <main class="area-main">
+            <section class="data-section">
+                <div class="section-header">
+                    <h3>Duyệt đơn nghỉ phép</h3>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;">
+                            <option value="all">Tất cả trạng thái</option>
+                            <option value="pending" selected>Chờ duyệt</option>
+                            <option value="approved">Đã duyệt</option>
+                            <option value="rejected">Từ chối</option>
+                        </select>
+                        <button class="btn-primary"><i class="fa-solid fa-plus"></i> Tạo đơn nghỉ phép</button>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Mã NV</th>
+                            <th>Họ và tên</th>
+                            <th>Loại phép</th>
+                            <th>Từ ngày</th>
+                            <th>Đến ngày</th>
+                            <th>Số ngày</th>
+                            <th>Lý do</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>NV001</td>
+                            <td>Nguyễn Văn A</td>
+                            <td>Phép năm</td>
+                            <td>18/08/2026</td>
+                            <td>19/08/2026</td>
+                            <td>2</td>
+                            <td>Giải quyết việc gia đình</td>
+                            <td><span class="badge badge-warning">Chờ duyệt</span></td>
+                            <td>
+                                <a href="#" style="color: #10b981; margin-right: 10px; font-size: 1.1rem;" title="Duyệt"><i class="fa-solid fa-circle-check"></i></a>
+                                <a href="#" style="color: #ef4444; font-size: 1.1rem;" title="Từ chối"><i class="fa-solid fa-circle-xmark"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>NV002</td>
+                            <td>Trần Thị B</td>
+                            <td>Nghỉ ốm</td>
+                            <td>12/08/2026</td>
+                            <td>12/08/2026</td>
+                            <td>1</td>
+                            <td>Khám bệnh định kỳ</td>
+                            <td><span class="badge badge-success">Đã duyệt</span></td>
+                            <td>
+                                <a href="#" style="color: #3b82f6;" title="Xem chi tiết"><i class="fa-solid fa-eye"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>NV003</td>
+                            <td>Lê Hoàng C</td>
+                            <td>Nghỉ không lương</td>
+                            <td>05/08/2026</td>
+                            <td>07/08/2026</td>
+                            <td>3</td>
+                            <td>Việc cá nhân đột xuất</td>
+                            <td><span class="badge" style="background-color: #fef2f2; color: #ef4444;">Từ chối</span></td>
+                            <td>
+                                <a href="#" style="color: #3b82f6;" title="Xem chi tiết"><i class="fa-solid fa-eye"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+
+        <!-- 5. KHU VỰC FOOTER -->
+        <footer class="area-footer">
+            <p>© 2026 StaffSync HRM System - Bản quyền thuộc về tụi tui</p>
+        </footer>
+    </div>
+
+    <script>
+        document.querySelectorAll('.menu-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.parentElement.classList.toggle('open');
+            });
+        });
+    </script>
+</body>
+</html>

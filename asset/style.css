@@ -186,3 +186,10 @@ body {
     font-size: 13px;
     color: var(--text-muted);
 }
+a.area-logo {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
