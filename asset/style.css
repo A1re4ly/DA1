@@ -1,0 +1,195 @@
+:root {
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --bg-main: #f8fafc;
+    --bg-white: #ffffff;
+    --text-dark: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+}
+
+/* =========================================
+   THIẾT LẬP BỐ CỤC CSS GRID THEO SƠ ĐỒ
+   ========================================= */
+.layout-container {
+    display: grid;
+    grid-template-columns: 260px 1fr;         /* Cột LEFT cố định 260px, Cột MAIN giãn 1fr */
+    grid-template-rows: 70px 1fr 50px;         /* Hàng HEADER: 70px, BODY: tự tăng, FOOTER: 50px */
+    grid-template-areas:
+        "logo header"
+        "left main"
+        "footer footer";
+    min-height: 100vh;
+}
+
+/* 1. Area LOGO */
+.area-logo {
+    grid-area: logo;
+    background-color: var(--bg-white);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+    gap: 10px;
+}
+.logo-icon { color: var(--primary); font-size: 24px; }
+
+/* 2. Area HEADER */
+.area-header {
+    grid-area: header;
+    background-color: var(--bg-white);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+}
+.header-title h2 { font-size: 18px; color: var(--text-dark); font-weight: 600; }
+.user-profile { display: flex; align-items: center; gap: 16px; }
+.avatar { width: 38px; height: 38px; border-radius: 50%; }
+.icon-btn { font-size: 18px; color: var(--text-muted); cursor: pointer; }
+
+/* 3. Area LEFT (Menu) */
+.area-left {
+    grid-area: left;
+    background-color: var(--bg-white);
+    border-right: 1px solid var(--border);
+    padding: 20px 16px;
+}
+
+.menu-list { list-style: none; }
+.menu-item { margin-bottom: 6px; }
+.menu-item a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+.menu-item a:hover, .menu-item.active a {
+    background-color: #eff6ff;
+    color: var(--primary);
+}
+.menu-item .arrow { margin-left: auto; font-size: 12px; transition: transform 0.3s ease; }
+
+.submenu {
+    display: none;
+    list-style: none;
+    padding-left: 38px;
+    background-color: #f8fafc;
+    border-radius: 6px;
+    margin-top: 4px;
+}
+.submenu li a { padding: 8px 12px; font-size: 13px; color: var(--text-muted); }
+.submenu li a:hover { color: var(--primary); background-color: #e0f2fe; }
+.menu-item.open .submenu { display: block; }
+.menu-item.open .arrow { transform: rotate(180deg); }
+
+.border-top { border-top: 1px solid var(--border); margin-top: 20px; padding-top: 10px; }
+.text-danger { color: #ef4444 !important; }
+
+/* 4. Area MAIN (Nội dung chính) */
+.area-main {
+    grid-area: main;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+.stat-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #fff;
+}
+.bg-blue { background-color: #3b82f6; }
+.bg-green { background-color: #10b981; }
+.bg-purple { background-color: #8b5cf6; }
+.bg-orange { background-color: #f59e0b; }
+.stat-info h3 { font-size: 22px; margin-bottom: 2px; }
+.stat-info p { color: var(--text-muted); font-size: 14px; }
+
+.data-section {
+    background-color: #fff;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 24px;
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.btn-primary {
+    background-color: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.data-table { width: 100%; border-collapse: collapse; text-align: left; }
+.data-table th, .data-table td { padding: 14px; border-bottom: 1px solid var(--border); font-size: 14px; }
+.data-table th { color: var(--text-muted); font-weight: 600; }
+.badge { padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+.badge-warning { background-color: #fef3c7; color: #d97706; }
+.badge-success { background-color: #d1fae5; color: #059669; }
+
+/* 5. Area FOOTER */
+.area-footer {
+    grid-area: footer;
+    background-color: var(--bg-white);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+a.area-logo {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

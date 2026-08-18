@@ -1,0 +1,231 @@
+/* =========================================
+   RESET & BIẾN CƠ BẢN (VARIABLES)
+   ========================================= */
+:root {
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --bg-color: #f0f4f8;
+    --text-main: #111827;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+    --white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px; /* Thêm padding để không bị sát lề trên mobile */
+}
+
+/* =========================================
+   LOGO & KHUNG FORM CHÍNH
+   ========================================= */
+.logo-top-left {
+    position: absolute;
+    top: 30px;
+    left: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-icon {
+    color: var(--primary-color);
+    font-size: 28px;
+}
+
+.form-container {
+    background-color: var(--white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Đổ bóng sâu và hiện đại hơn */
+    width: 100%;
+    max-width: 420px;
+    transition: transform 0.3s ease;
+}
+
+/* Hiệu ứng nổi nhẹ khi rê chuột vào form */
+.form-container:hover {
+    transform: translateY(-2px);
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.form-container h2 {
+    font-size: 32px;
+    color: var(--text-main);
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+/* =========================================
+   INPUT & TÙY CHỌN (OPTIONS)
+   ========================================= */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.input-group input::placeholder {
+    color: #9ca3af;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    color: var(--text-main);
+    cursor: pointer;
+}
+
+.remember-me input {
+    margin-right: 8px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary-color); /* Đổi màu checkbox cho đồng bộ */
+}
+
+.forgot-password {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.forgot-password:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+/* =========================================
+   NÚT BẤM (BUTTONS)
+   ========================================= */
+.btn-submit {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-google {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--white);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-google:hover {
+    background-color: #f9fafb;
+}
+
+.google-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* =========================================
+   FOOTER CHUYỂN TRANG
+   ========================================= */
+.form-footer {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.form-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.form-footer a:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+/* =========================================
+   RESPONSIVE (HỖ TRỢ ĐIỆN THOẠI)
+   ========================================= */
+@media (max-width: 480px) {
+    .logo-top-left {
+        position: relative;
+        top: 0;
+        left: 0;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+    
+    body {
+        flex-direction: column;
+    }
+
+    .form-container {
+        padding: 30px 20px;
+    }
+    
+    .form-container h2 {
+        font-size: 26px;
+    }
+}

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm nhân viên mới - NovaHM</title>
+    <link rel="stylesheet" href="asset/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS bổ sung riêng cho Form thêm nhân viên */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        .form-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #334155;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #3b82f6;
+        }
+        .form-actions {
+            margin-top: 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        .btn-secondary {
+            background-color: #94a3b8;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-secondary:hover { background-color: #64748b; }
+    </style>
+</head>
+<body>
+
+    <div class="layout-container">
+        <!-- 1. KHU VỰC LOGO -->
+        <div class="area-logo">
+            <span class="logo-icon">❖</span> NovaHM
+        </div>
+
+        <!-- 2. KHU VỰC HEADER -->
+        <header class="area-header">
+            <div class="header-title">
+                <h2>HỆ THỐNG QUẢN LÝ NHÂN SỰ</h2>
+            </div>
+            <div class="user-profile">
+                <i class="fa-regular fa-bell icon-btn"></i>
+                <img src="https://ui-avatars.com/api/?name=Admin+User&background=3b82f6&color=fff" alt="Avatar" class="avatar">
+                <span class="user-name">Quản trị viên</span>
+            </div>
+        </header>
+
+        <!-- 3. KHU VỰC LEFT (MENU CHÍNH) -->
+        <aside class="area-left">
+            <ul class="menu-list">
+                <li class="menu-item">
+                    <a href="index.html"><i class="fa-solid fa-chart-pie"></i> <span>Tổng quan</span></a>
+                </li>
+
+                <!-- Menu Hồ sơ nhân viên -->
+                <li class="menu-item has-submenu open">
+                    <a href="javascript:void(0)" class="menu-toggle">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Hồ sơ nhân viên</span>
+                        <i class="fa-solid fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="danhsachnhanvien.html">Danh sách nhân viên</a></li>
+                        <li class="active"><a href="themnhanvien.html">Thêm nhân viên mới</a></li>
+                        <li><a href="hopdong.html">Hợp đồng lao động</a></li>
+                    </ul>
+                </li>
+
+                <!-- Menu Chấm công -->
+                <li class="menu-item has-submenu">
+                    <a href="javascript:void(0)" class="menu-toggle">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Chấm công</span>
+                        <i class="fa-solid fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#">Bảng chấm công ngày</a></li>
+                        <li><a href="#">Lịch sử ra/vào</a></li>
+                    </ul>
+                </li>
+
+                <!-- Menu Tính lương -->
+                <li class="menu-item has-submenu">
+                    <a href="javascript:void(0)" class="menu-toggle">
+                        <i class="fa-solid fa-calculator"></i>
+                        <span>Tính lương cơ bản</span>
+                        <i class="fa-solid fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#">Bảng tính lương tháng</a></li>
+                        <li><a href="#">Cấu hình lương</a></li>
+                    </ul>
+                </li>
+
+                <!-- Menu Quản lý ngày phép -->
+                <li class="menu-item has-submenu">
+                    <a href="javascript:void(0)" class="menu-toggle">
+                        <i class="fa-solid fa-mug-hot"></i>
+                        <span>Quản lý ngày phép</span>
+                        <i class="fa-solid fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#">Duyệt đơn nghỉ phép</a></li>
+                        <li><a href="#">Quỹ phép năm</a></li>
+                    </ul>
+                </li>
+
+                <li class="menu-item border-top">
+                    <a href="login.html" class="text-danger"><i class="fa-solid fa-right-from-bracket"></i> <span>Đăng xuất</span></a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 4. KHU VỰC MAIN (FORM THÊM NHÂN VIÊN) -->
+        <main class="area-main">
+            <section class="data-section">
+                <div class="section-header">
+                    <h3>Thêm nhân viên mới</h3>
+                    <a href="danhsachnhanvien.html" class="btn-secondary"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
+                </div>
+
+                <form action="danhsachnhanvien.html" method="GET">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="emp-id">Mã nhân viên *</label>
+                            <input type="text" id="emp-id" placeholder="Ví dụ: NV004" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emp-name">Họ và tên *</label>
+                            <input type="text" id="emp-name" placeholder="Nhập họ và tên" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emp-phone">Số điện thoại</label>
+                            <input type="tel" id="emp-phone" placeholder="0901234567">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emp-email">Email *</label>
+                            <input type="email" id="emp-email" placeholder="nguyenvana@novacompany.vn" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emp-dept">Phòng ban *</label>
+                            <select id="emp-dept" required>
+                                <option value="">-- Chọn phòng ban --</option>
+                                <option value="tech">Phòng Kỹ thuật</option>
+                                <option value="hr">Phòng Nhân sự</option>
+                                <option value="accounting">Phòng Kế toán</option>
+                                <option value="sale">Phòng Kinh doanh</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emp-role">Chức vụ</label>
+                            <input type="text" id="emp-role" placeholder="Chuyên viên / Trưởng phòng...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emp-date">Ngày vào làm</label>
+                            <input type="date" id="emp-date">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emp-status">Trạng thái làm việc</label>
+                            <select id="emp-status">
+                                <option value="active">Chính thức</option>
+                                <option value="probation">Thử việc</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="danhsachnhanvien.html" class="btn-secondary">Hủy bỏ</a>
+                        <button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Lưu nhân viên</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+
+        <!-- 5. KHU VỰC FOOTER -->
+        <footer class="area-footer">
+            <p>© 2026 StaffSync HRM System - Bản quyền thuộc về tụi tui</p>
+        </footer>
+    </div>
+
+    <script>
+        document.querySelectorAll('.menu-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.parentElement.classList.toggle('open');
+            });
+        });
+    </script>
+</body>
+</html>
