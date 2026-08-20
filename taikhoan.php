@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
+yeuCauQuanTri();  // chỉ Admin/HR/Kế toán/Trưởng phòng mới vào được
 $pageTitle = 'Quản lý tài khoản - NovaHM';
 
 $loi = '';

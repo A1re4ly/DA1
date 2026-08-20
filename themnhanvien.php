@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
+yeuCauQuanTri();  // chỉ Admin/HR/Kế toán/Trưởng phòng mới vào được
 
 $dangSua = isset($_GET['id']);
 $pageTitle = $dangSua ? 'Sửa nhân viên - NovaHM' : 'Thêm nhân viên mới - NovaHM';

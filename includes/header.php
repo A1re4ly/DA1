@@ -23,7 +23,13 @@ function isActive($file, $current) {
 // Số đơn phép chờ duyệt -> hiện lên chuông thông báo
 $soDonChoDuyet = 0;
 try {
-    $soDonChoDuyet = (int)$pdo->query("SELECT COUNT(*) FROM don_nghi_phep WHERE trang_thai='Chờ duyệt'")->fetchColumn();
+    if ($currentUser['la_admin']) {
+        $soDonChoDuyet = (int)$pdo->query("SELECT COUNT(*) FROM don_nghi_phep WHERE trang_thai='Chờ duyệt'")->fetchColumn();
+    } elseif (!empty($currentUser['id_nv'])) {
+        $s = $pdo->prepare("SELECT COUNT(*) FROM don_nghi_phep WHERE trang_thai='Chờ duyệt' AND id_nv = :nv");
+        $s->execute([':nv' => $currentUser['id_nv']]);
+        $soDonChoDuyet = (int)$s->fetchColumn();
+    }
 } catch (Exception $e) { /* im lặng nếu bảng chưa có dữ liệu */ }
 ?>
 <!DOCTYPE html>
@@ -62,6 +68,7 @@ try {
         <!-- 3. MENU -->
         <aside class="area-left">
             <ul class="menu-list">
+            <?php if ($currentUser['la_admin']): ?>
                 <li class="menu-item<?= isActive('index.php', $currentFile) ?>">
                     <a href="index.php"><i class="fa-solid fa-chart-pie"></i> <span>Tổng quan</span></a>
                 </li>
@@ -111,6 +118,23 @@ try {
                         <li class="<?= trim(isActive('quyphepnam.php', $currentFile)) ?>"><a href="quyphepnam.php">Quỹ phép năm</a></li>
                     </ul>
                 </li>
+            <?php else: ?>
+                <li class="menu-item<?= isActive('trangcanhan.php', $currentFile) ?>">
+                    <a href="trangcanhan.php"><i class="fa-solid fa-house"></i> <span>Trang cá nhân</span></a>
+                </li>
+                <li class="menu-item<?= isActive('hoso_canhan.php', $currentFile) ?>">
+                    <a href="hoso_canhan.php"><i class="fa-solid fa-id-card"></i> <span>Hồ sơ của tôi</span></a>
+                </li>
+                <li class="menu-item<?= isActive('chamcong_canhan.php', $currentFile) ?>">
+                    <a href="chamcong_canhan.php"><i class="fa-solid fa-calendar-check"></i> <span>Chấm công của tôi</span></a>
+                </li>
+                <li class="menu-item<?= isActive('luong_canhan.php', $currentFile) ?>">
+                    <a href="luong_canhan.php"><i class="fa-solid fa-sack-dollar"></i> <span>Lương của tôi</span></a>
+                </li>
+                <li class="menu-item<?= isActive('phepnam_canhan.php', $currentFile) ?>">
+                    <a href="phepnam_canhan.php"><i class="fa-solid fa-mug-hot"></i> <span>Nghỉ phép của tôi</span></a>
+                </li>
+            <?php endif; ?>
 
                 <li class="menu-item border-top">
                     <a href="logout.php" class="text-danger"><i class="fa-solid fa-right-from-bracket"></i> <span>Đăng xuất</span></a>

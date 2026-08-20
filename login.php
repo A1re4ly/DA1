@@ -42,7 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->prepare("UPDATE nguoi_dung SET lan_dang_nhap_cuoi = NOW() WHERE id = :id")
                 ->execute([':id' => $user['id']]);
 
-            header('Location: index.php');
+            $vaiTroQuanTri = ['ADMIN', 'HR', 'KETOAN', 'TRUONGPHONG'];
+            if (in_array($user['ma_vai_tro'], $vaiTroQuanTri, true)) {
+                header('Location: index.php');
+            } else {
+                header('Location: trangcanhan.php');
+            }
             exit;
         }
     }

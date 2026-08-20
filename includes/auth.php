@@ -14,13 +14,36 @@ if (empty($_SESSION['user_id'])) {
     exit;
 }
 
+// Các vai trò được coi là "quản trị" -> dùng giao diện Admin đầy đủ.
+// NHANVIEN -> chỉ dùng giao diện tự phục vụ (trang cá nhân).
+const VAI_TRO_QUAN_TRI = ['ADMIN', 'HR', 'KETOAN', 'TRUONGPHONG'];
+
 // Thông tin người dùng hiện tại, dùng lại ở header (avatar, tên, vai trò)
 $currentUser = [
     'id'       => $_SESSION['user_id'],
     'ten'      => $_SESSION['user_name']  ?? 'Người dùng',
     'vai_tro'  => $_SESSION['user_role']  ?? 'NHANVIEN',
     'id_nv'    => $_SESSION['id_nv']      ?? null,
+    'la_admin' => in_array($_SESSION['user_role'] ?? 'NHANVIEN', VAI_TRO_QUAN_TRI, true),
 ];
+
+/** Chặn truy cập nếu không phải vai trò quản trị -> đá về trang cá nhân */
+function yeuCauQuanTri() {
+    global $currentUser;
+    if (!$currentUser['la_admin']) {
+        header('Location: trangcanhan.php?err=noaccess');
+        exit;
+    }
+}
+
+/** Chặn truy cập nếu tài khoản không gắn với hồ sơ nhân viên nào (vd tài khoản Admin hệ thống) */
+function yeuCauCoHoSoNhanVien() {
+    global $currentUser;
+    if (empty($currentUser['id_nv'])) {
+        header('Location: index.php?err=noprofile');
+        exit;
+    }
+}
 
 /** Trợ giúp: định dạng tiền VNĐ */
 function formatTien($so) {

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
+yeuCauQuanTri();  // chỉ Admin/HR/Kế toán/Trưởng phòng mới vào được
 $pageTitle = 'Danh sách nhân viên - NovaHM';
 
 // Xử lý xoá nhân viên

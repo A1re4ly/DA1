@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
+yeuCauQuanTri();  // chỉ Admin/HR/Kế toán/Trưởng phòng mới vào được
 $pageTitle = 'Duyệt đơn nghỉ phép - NovaHM';
 
 // Duyệt / Từ chối đơn

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
+yeuCauQuanTri();  // chỉ Admin/HR/Kế toán/Trưởng phòng mới vào được
 $pageTitle = 'Bảng chấm công ngày - NovaHM';
 
 $ngayChon = $_GET['ngay'] ?? date('Y-m-d');

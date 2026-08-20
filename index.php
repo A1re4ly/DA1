@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
+yeuCauQuanTri();  // chỉ Admin/HR/Kế toán/Trưởng phòng mới vào được
 $pageTitle = 'Bảng điều khiển - NovaHM';
 
 // 4 thẻ thống kê -> lấy từ view vw_thong_ke_tong_quan
