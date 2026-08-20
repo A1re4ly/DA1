@@ -2,7 +2,7 @@
 
         <!-- 5. FOOTER -->
         <footer class="area-footer">
-            <p>© 2026 StaffSync HRM System - Bản quyền thuộc về tụi tui</p>
+            <p>© 2026 HovaHM System - Bản quyền thuộc về tụi tui</p>
         </footer>
     </div>
 
