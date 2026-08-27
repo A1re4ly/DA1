@@ -1,13 +1,20 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
-yeuCauQuanTri();  // chỉ Admin/HR/Kế toán/Trưởng phòng mới vào được
+yeuCauQuyen('LUONG_XEM');  // Admin + Kế toán
 $pageTitle = 'Bảng tính lương tháng - NovaHM';
 
 $thangNam = $_GET['thang'] ?? date('Y-m');
 [$nam, $thang] = explode('-', $thangNam);
+$chotInfo = thongTinChotThang($pdo, (int)$thang, (int)$nam);
+$daChotThang = $chotInfo !== null;
 
 // ---- TÍNH LƯƠNG THÁNG (khi bấm nút "Tính lương tháng") ----
 if (isset($_POST['tinh_luong'])) {
+    yeuCauQuyen('LUONG_DUYET');
+    if (!$daChotThang) {
+        header("Location: bangtinhluongthang.php?thang=$thangNam&err=chuachot");
+        exit;
+    }
     $cfg = $pdo->query("SELECT * FROM cau_hinh_luong ORDER BY ngay_ap_dung DESC, id DESC LIMIT 1")->fetch();
     if (!$cfg) $cfg = ['so_ngay_cong_chuan'=>22,'luong_co_so'=>1800000,'phu_cap_an_trua'=>730000,'phu_cap_di_lai'=>500000,'ty_le_bhxh'=>8,'ty_le_bhyt'=>1.5,'ty_le_bhtn'=>1,'muc_phat_di_muon'=>10000];
 
@@ -64,6 +71,7 @@ if (isset($_POST['tinh_luong'])) {
 
 // Duyệt phiếu lương
 if (isset($_GET['duyet'])) {
+    yeuCauQuyen('LUONG_DUYET');
     $id = (int)$_GET['duyet'];
     $pdo->prepare("UPDATE bang_luong_thang SET trang_thai='Đã duyệt', id_nguoi_duyet=:u, ngay_duyet=NOW() WHERE id=:id")
         ->execute([':u' => $currentUser['id'], ':id' => $id]);
@@ -98,12 +106,30 @@ require __DIR__ . '/includes/header.php';
                             <input type="month" name="thang" value="<?= htmlspecialchars($thangNam) ?>" onchange="this.form.submit()"
                                    style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;">
                         </form>
+                        <?php if (coQuyen('LUONG_DUYET')): ?>
                         <form action="bangtinhluongthang.php?thang=<?= htmlspecialchars($thangNam) ?>" method="POST">
-                            <button type="submit" name="tinh_luong" value="1" class="btn-primary"><i class="fa-solid fa-calculator"></i> Tính lương tháng</button>
+                            <button type="submit" name="tinh_luong" value="1" class="btn-primary" <?= !$daChotThang ? 'disabled title="Tháng này chưa được chốt bảng công"' : '' ?>>
+                                <i class="fa-solid fa-calculator"></i> Tính lương tháng
+                            </button>
                         </form>
+                        <?php endif; ?>
                         <a href="bangtinhluongthang.php?thang=<?= htmlspecialchars($thangNam) ?>&xuat=excel" class="btn-primary" style="background-color:#10b981;text-decoration:none;"><i class="fa-solid fa-file-excel"></i> Xuất Excel</a>
                     </div>
                 </div>
+
+                <?php if ($daChotThang): ?>
+                    <p style="background:#eff6ff;color:#3b82f6;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px;">
+                        <i class="fa-solid fa-circle-check"></i> Bảng công tháng <?= (int)$thang ?>/<?= $nam ?> đã được
+                        <strong><?= htmlspecialchars($chotInfo['ten_nguoi_chot']) ?></strong> chốt — có thể tính lương.
+                    </p>
+                <?php else: ?>
+                    <p style="background:#fef3c7;color:#92400e;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Bảng công tháng <?= (int)$thang ?>/<?= $nam ?> <strong>chưa được Nhân sự chốt</strong>. Liên hệ Nhân sự để chốt bảng công trước khi tính lương.
+                    </p>
+                <?php endif; ?>
+                <?php if (isset($_GET['err']) && $_GET['err'] === 'chuachot'): ?>
+                    <p style="background:#fef2f2;color:#ef4444;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px;">Không thể tính lương — tháng này chưa được chốt bảng công.</p>
+                <?php endif; ?>
 
                 <?php if (isset($_GET['msg'])): ?>
                     <p style="background:#d1fae5;color:#059669;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px;">
@@ -130,7 +156,7 @@ require __DIR__ . '/includes/header.php';
                             <td><strong><?= formatTien($bl['thuc_linh']) ?></strong></td>
                             <td><?= badgeLuong($bl['trang_thai']) ?></td>
                             <td>
-                                <?php if ($bl['trang_thai'] === 'Chờ duyệt'): ?>
+                                <?php if ($bl['trang_thai'] === 'Chờ duyệt' && coQuyen('LUONG_DUYET')): ?>
                                 <a href="bangtinhluongthang.php?thang=<?= htmlspecialchars($thangNam) ?>&duyet=<?= $bl['id'] ?>" style="color:#10b981;" title="Duyệt phiếu lương"><i class="fa-solid fa-circle-check"></i></a>
                                 <?php else: ?>
                                 <span style="color:#3b82f6;" title="Xem phiếu lương"><i class="fa-solid fa-eye"></i></span>

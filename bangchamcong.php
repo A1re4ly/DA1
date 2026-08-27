@@ -1,58 +1,96 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
-yeuCauQuanTri();  // chỉ Admin/HR/Kế toán/Trưởng phòng mới vào được
+yeuCauQuyen('CHAMCONG_XEM');  // Admin + Nhân sự (sửa) + Kế toán (chỉ xem, chỉ tháng đã chốt)
 $pageTitle = 'Bảng chấm công ngày - NovaHM';
 
 $ngayChon = $_GET['ngay'] ?? date('Y-m-d');
+$thangCuaNgay = (int)date('n', strtotime($ngayChon));
+$namCuaNgay   = (int)date('Y', strtotime($ngayChon));
+$chotInfo = thongTinChotThang($pdo, $thangCuaNgay, $namCuaNgay);
+$daChot = $chotInfo !== null;
 
-// Chấm công thủ công (thêm/sửa giờ vào-ra cho 1 nhân viên trong ngày)
 $loi = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id_nv  = (int)($_POST['id_nv'] ?? 0);
-    $ngay   = $_POST['ngay'] ?? $ngayChon;
-    $gioVao = trim($_POST['gio_vao'] ?? '') !== '' ? $_POST['gio_vao'] : null;
-    $gioRa  = trim($_POST['gio_ra'] ?? '') !== '' ? $_POST['gio_ra'] : null;
 
-    if (!$id_nv) {
-        $loi = 'Vui lòng chọn nhân viên.';
+// Chốt bảng công tháng (chỉ ai có quyền CHAMCONG_SUA, tức Admin/Nhân sự)
+if (isset($_POST['chot_thang'])) {
+    yeuCauQuyen('CHAMCONG_SUA');
+    if (!$daChot) {
+        $pdo->prepare("INSERT INTO chot_bang_cong (thang, nam, id_nguoi_chot) VALUES (:t, :n, :u)")
+            ->execute([':t' => $thangCuaNgay, ':n' => $namCuaNgay, ':u' => $currentUser['id']]);
+        ghiNhatKy($pdo, 'CHOT', 'chot_bang_cong', null, "Chốt bảng công tháng $thangCuaNgay/$namCuaNgay");
+    }
+    header("Location: bangchamcong.php?ngay=$ngayChon&msg=chotdone");
+    exit;
+}
+
+// Mở khoá tháng đã chốt (chỉ Admin)
+if (isset($_POST['mo_khoa_thang'])) {
+    yeuCauVaiTro('ADMIN');
+    $pdo->prepare("DELETE FROM chot_bang_cong WHERE thang = :t AND nam = :n")
+        ->execute([':t' => $thangCuaNgay, ':n' => $namCuaNgay]);
+    ghiNhatKy($pdo, 'MOKHOA', 'chot_bang_cong', null, "Mở khoá bảng công tháng $thangCuaNgay/$namCuaNgay");
+    header("Location: bangchamcong.php?ngay=$ngayChon&msg=unlocked");
+    exit;
+}
+
+// Chấm công thủ công (thêm/sửa giờ vào-ra cho 1 nhân viên trong ngày) — chặn nếu tháng đã chốt
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_nv'])) {
+    yeuCauQuyen('CHAMCONG_SUA');  // Kế toán chỉ có CHAMCONG_XEM -> bị chặn ở đây dù cố gửi form bằng tay
+
+    if ($daChot && !laVaiTro('ADMIN')) {
+        $loi = 'Tháng này đã được chốt bảng công. Chỉ Admin có thể mở khoá lại trước khi sửa.';
     } else {
-        $soGio = ($gioVao && $gioRa) ? round((strtotime($gioRa) - strtotime($gioVao)) / 3600, 2) : 0;
-        $soPhutTre = 0;
-        $trangThai = 'Vắng mặt';
-        if ($gioVao) {
-            $trangThai = $gioVao > '08:00:00' ? 'Đi muộn' : 'Đúng giờ';
-            if ($gioVao > '08:00:00') {
-                $soPhutTre = round((strtotime($gioVao) - strtotime('08:00:00')) / 60);
+        $id_nv  = (int)($_POST['id_nv'] ?? 0);
+        $ngay   = $_POST['ngay'] ?? $ngayChon;
+        $gioVao = trim($_POST['gio_vao'] ?? '') !== '' ? $_POST['gio_vao'] : null;
+        $gioRa  = trim($_POST['gio_ra'] ?? '') !== '' ? $_POST['gio_ra'] : null;
+
+        if (!$id_nv) {
+            $loi = 'Vui lòng chọn nhân viên.';
+        } else {
+            $soGio = ($gioVao && $gioRa) ? round((strtotime($gioRa) - strtotime($gioVao)) / 3600, 2) : 0;
+            $soPhutTre = 0;
+            $trangThai = 'Vắng mặt';
+            if ($gioVao) {
+                $trangThai = $gioVao > '08:00:00' ? 'Đi muộn' : 'Đúng giờ';
+                if ($gioVao > '08:00:00') {
+                    $soPhutTre = round((strtotime($gioVao) - strtotime('08:00:00')) / 60);
+                }
             }
+            $stmt = $pdo->prepare("
+                INSERT INTO bang_cham_cong_ngay (id_nv, ngay, gio_vao, gio_ra, so_gio_lam, so_phut_tre, trang_thai)
+                VALUES (:nv, :ngay, :vao, :ra, :gio, :tre, :tt)
+                ON DUPLICATE KEY UPDATE gio_vao=:vao2, gio_ra=:ra2, so_gio_lam=:gio2, so_phut_tre=:tre2, trang_thai=:tt2
+            ");
+            $stmt->execute([
+                ':nv' => $id_nv, ':ngay' => $ngay, ':vao' => $gioVao, ':ra' => $gioRa,
+                ':gio' => $soGio, ':tre' => $soPhutTre, ':tt' => $trangThai,
+                ':vao2' => $gioVao, ':ra2' => $gioRa, ':gio2' => $soGio, ':tre2' => $soPhutTre, ':tt2' => $trangThai,
+            ]);
+            ghiNhatKy($pdo, 'UPDATE', 'bang_cham_cong_ngay', $id_nv, "Chấm công thủ công ngày $ngay");
+            header("Location: bangchamcong.php?ngay=$ngay&msg=saved");
+            exit;
         }
-        $stmt = $pdo->prepare("
-            INSERT INTO bang_cham_cong_ngay (id_nv, ngay, gio_vao, gio_ra, so_gio_lam, so_phut_tre, trang_thai)
-            VALUES (:nv, :ngay, :vao, :ra, :gio, :tre, :tt)
-            ON DUPLICATE KEY UPDATE gio_vao=:vao2, gio_ra=:ra2, so_gio_lam=:gio2, so_phut_tre=:tre2, trang_thai=:tt2
-        ");
-        $stmt->execute([
-            ':nv' => $id_nv, ':ngay' => $ngay, ':vao' => $gioVao, ':ra' => $gioRa,
-            ':gio' => $soGio, ':tre' => $soPhutTre, ':tt' => $trangThai,
-            ':vao2' => $gioVao, ':ra2' => $gioRa, ':gio2' => $soGio, ':tre2' => $soPhutTre, ':tt2' => $trangThai,
-        ]);
-        ghiNhatKy($pdo, 'UPDATE', 'bang_cham_cong_ngay', $id_nv, "Chấm công thủ công ngày $ngay");
-        header("Location: bangchamcong.php?ngay=$ngay&msg=saved");
-        exit;
     }
 }
 
-// Danh sách chấm công trong ngày (LEFT JOIN để nhân viên chưa chấm công vẫn hiện "Vắng mặt")
-$stmt = $pdo->prepare("
-    SELECT nv.id AS id_nv, nv.ma_nv, nv.ho_ten, pb.ten_phong_ban,
-           bc.gio_vao, bc.gio_ra, bc.trang_thai
-    FROM nhan_vien nv
-    LEFT JOIN phong_ban pb ON pb.id = nv.id_phong_ban
-    LEFT JOIN bang_cham_cong_ngay bc ON bc.id_nv = nv.id AND bc.ngay = :ngay
-    WHERE nv.trang_thai_lam_viec <> 'Nghỉ việc'
-    ORDER BY nv.ma_nv
-");
-$stmt->execute([':ngay' => $ngayChon]);
-$dsChamCong = $stmt->fetchAll();
+// Kế toán: chỉ được xem dữ liệu của tháng ĐÃ CHỐT — nếu chưa chốt thì không hiển thị bảng
+$duocXemDuLieu = laVaiTro('ADMIN', 'HR') || $daChot;
+
+$dsChamCong = [];
+if ($duocXemDuLieu) {
+    $stmt = $pdo->prepare("
+        SELECT nv.id AS id_nv, nv.ma_nv, nv.ho_ten, pb.ten_phong_ban,
+               bc.gio_vao, bc.gio_ra, bc.trang_thai
+        FROM nhan_vien nv
+        LEFT JOIN phong_ban pb ON pb.id = nv.id_phong_ban
+        LEFT JOIN bang_cham_cong_ngay bc ON bc.id_nv = nv.id AND bc.ngay = :ngay
+        WHERE nv.trang_thai_lam_viec <> 'Nghỉ việc'
+        ORDER BY nv.ma_nv
+    ");
+    $stmt->execute([':ngay' => $ngayChon]);
+    $dsChamCong = $stmt->fetchAll();
+}
 
 $dsNhanVienChon = $pdo->query("SELECT id, ma_nv, ho_ten FROM nhan_vien ORDER BY ho_ten")->fetchAll();
 
@@ -73,19 +111,50 @@ require __DIR__ . '/includes/header.php';
                                    onchange="this.form.submit()"
                                    style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;">
                         </form>
+                        <?php if (coQuyen('CHAMCONG_SUA') && !$daChot): ?>
                         <button class="btn-primary" onclick="document.getElementById('formCC').style.display='block'">
                             <i class="fa-solid fa-fingerprint"></i> Chấm công thủ công
                         </button>
+                        <form action="bangchamcong.php?ngay=<?= htmlspecialchars($ngayChon) ?>" method="POST"
+                              onsubmit="return confirm('Chốt bảng công tháng <?= $thangCuaNgay ?>/<?= $namCuaNgay ?>? Sau khi chốt sẽ không thể sửa chấm công tháng này nữa (trừ khi Admin mở khoá lại).');">
+                            <button type="submit" name="chot_thang" value="1" class="btn-primary" style="background-color:#f59e0b;">
+                                <i class="fa-solid fa-lock"></i> Chốt bảng công tháng <?= $thangCuaNgay ?>/<?= $namCuaNgay ?>
+                            </button>
+                        </form>
+                        <?php endif; ?>
                     </div>
                 </div>
 
-                <?php if (isset($_GET['msg'])): ?>
-                    <p style="background:#d1fae5;color:#059669;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px;">Đã lưu chấm công.</p>
+                <?php if ($daChot): ?>
+                    <p style="background:#fef3c7;color:#92400e;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+                        <span><i class="fa-solid fa-lock"></i> Bảng công tháng <?= $thangCuaNgay ?>/<?= $namCuaNgay ?> đã được
+                        <strong><?= htmlspecialchars($chotInfo['ten_nguoi_chot']) ?></strong> chốt lúc
+                        <?= date('H:i d/m/Y', strtotime($chotInfo['ngay_chot'])) ?>. Không thể sửa chấm công tháng này nữa.</span>
+                        <?php if (laVaiTro('ADMIN')): ?>
+                        <form action="bangchamcong.php?ngay=<?= htmlspecialchars($ngayChon) ?>" method="POST" style="display:inline;"
+                              onsubmit="return confirm('Mở khoá bảng công tháng này? Nhân sự sẽ sửa được chấm công trở lại.');">
+                            <button type="submit" name="mo_khoa_thang" value="1" style="border:none;background:#fff;color:#92400e;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:13px;border:1px solid #f59e0b;">
+                                <i class="fa-solid fa-lock-open"></i> Mở khoá tháng
+                            </button>
+                        </form>
+                        <?php endif; ?>
+                    </p>
+                <?php elseif (!coQuyen('CHAMCONG_SUA')): ?>
+                    <p style="background:#eff6ff;color:#3b82f6;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px;">
+                        <i class="fa-solid fa-circle-info"></i> Tháng <?= $thangCuaNgay ?>/<?= $namCuaNgay ?> <strong>chưa được Nhân sự chốt</strong> — dữ liệu chấm công chưa sẵn sàng để xem.
+                    </p>
+                <?php endif; ?>
+
+                <?php if (isset($_GET['msg'])):
+                    $mmap = ['saved'=>'Đã lưu chấm công.', 'chotdone'=>'Đã chốt bảng công tháng này.', 'unlocked'=>'Đã mở khoá bảng công tháng này.'];
+                ?>
+                    <p style="background:#d1fae5;color:#059669;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px;"><?= $mmap[$_GET['msg']] ?? '' ?></p>
                 <?php endif; ?>
                 <?php if ($loi): ?>
                     <p style="background:#fef2f2;color:#ef4444;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px;"><?= htmlspecialchars($loi) ?></p>
                 <?php endif; ?>
 
+                <?php if (coQuyen('CHAMCONG_SUA') && !$daChot): ?>
                 <div id="formCC" style="display:<?= $loi ? 'block' : 'none' ?>; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:20px; margin-bottom:20px;">
                     <form action="bangchamcong.php" method="POST" style="display:grid; grid-template-columns: repeat(4,1fr); gap:14px; align-items:end;">
                         <input type="hidden" name="ngay" value="<?= htmlspecialchars($ngayChon) ?>">
@@ -111,7 +180,9 @@ require __DIR__ . '/includes/header.php';
                         </div>
                     </form>
                 </div>
+                <?php endif; ?>
 
+                <?php if ($duocXemDuLieu): ?>
                 <table class="data-table">
                     <thead>
                         <tr><th>Mã NV</th><th>Họ và tên</th><th>Phòng ban</th><th>Giờ vào</th><th>Giờ ra</th><th>Trạng thái</th></tr>
@@ -129,5 +200,6 @@ require __DIR__ . '/includes/header.php';
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+                <?php endif; ?>
             </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>

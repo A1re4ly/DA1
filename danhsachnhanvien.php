@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
-yeuCauQuanTri();  // chỉ Admin/HR/Kế toán/Trưởng phòng mới vào được
+yeuCauQuyen('NHANVIEN_XEM');  // Admin + Nhân sự tổng hợp
 $pageTitle = 'Danh sách nhân viên - NovaHM';
 
 // Xử lý xoá nhân viên

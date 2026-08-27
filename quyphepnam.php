@@ -1,12 +1,17 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
-yeuCauQuanTri();  // chỉ Admin/HR/Kế toán/Trưởng phòng mới vào được
+yeuCauVaiTro('ADMIN', 'TRUONGPHONG');  // Admin: toàn quyền | Trưởng phòng: chỉ xem phòng mình quản lý
 $pageTitle = 'Quỹ phép năm - NovaHM';
+
+$laAdmin = laVaiTro('ADMIN');
+$laTruongPhong = laVaiTro('TRUONGPHONG');
+$phongBanQL = $currentUser['phong_ban_quan_ly'];
 
 $namChon = $_GET['nam'] ?? date('Y');
 
-// Cập nhật tổng phép năm cho 1 nhân viên
+// Chỉ Admin được sửa tổng phép năm
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    yeuCauVaiTro('ADMIN');
     $id = (int)($_POST['id'] ?? 0);
     $tongPhepMoi = (float)($_POST['tong_phep'] ?? 0);
     if ($id) {
@@ -18,23 +23,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Đảm bảo mỗi nhân viên đang làm việc đều có 1 dòng quỹ phép cho năm đang chọn
-$nhanViens = $pdo->query("SELECT id FROM nhan_vien WHERE trang_thai_lam_viec <> 'Nghỉ việc'")->fetchAll();
-foreach ($nhanViens as $nvRow) {
-    $pdo->prepare("INSERT IGNORE INTO quy_phep_nam (id_nv, nam, tong_phep, da_su_dung) VALUES (:nv, :nam, 12, 0)")
-        ->execute([':nv' => $nvRow['id'], ':nam' => $namChon]);
+// Đảm bảo mỗi nhân viên đang làm việc đều có 1 dòng quỹ phép cho năm đang chọn (chỉ Admin mới tự động tạo)
+if ($laAdmin) {
+    $nhanViens = $pdo->query("SELECT id FROM nhan_vien WHERE trang_thai_lam_viec <> 'Nghỉ việc'")->fetchAll();
+    foreach ($nhanViens as $nvRow) {
+        $pdo->prepare("INSERT IGNORE INTO quy_phep_nam (id_nv, nam, tong_phep, da_su_dung) VALUES (:nv, :nam, 12, 0)")
+            ->execute([':nv' => $nvRow['id'], ':nam' => $namChon]);
+    }
 }
 
-$stmt = $pdo->prepare("
-    SELECT qp.id, qp.tong_phep, qp.da_su_dung, qp.con_lai,
-           nv.ma_nv, nv.ho_ten, pb.ten_phong_ban
-    FROM quy_phep_nam qp
-    JOIN nhan_vien nv ON nv.id = qp.id_nv
-    LEFT JOIN phong_ban pb ON pb.id = nv.id_phong_ban
-    WHERE qp.nam = :nam
-    ORDER BY nv.ma_nv
-");
-$stmt->execute([':nam' => $namChon]);
+$sql = "SELECT qp.id, qp.tong_phep, qp.da_su_dung, qp.con_lai,
+               nv.ma_nv, nv.ho_ten, pb.ten_phong_ban
+        FROM quy_phep_nam qp
+        JOIN nhan_vien nv ON nv.id = qp.id_nv
+        LEFT JOIN phong_ban pb ON pb.id = nv.id_phong_ban
+        WHERE qp.nam = :nam";
+$params = [':nam' => $namChon];
+
+if ($laTruongPhong) {
+    if (empty($phongBanQL)) {
+        $sql .= " AND 1=0";
+    } else {
+        $phKeys = [];
+        foreach ($phongBanQL as $i => $pbId) {
+            $key = ":pb$i";
+            $phKeys[] = $key;
+            $params[$key] = $pbId;
+        }
+        $sql .= " AND nv.id_phong_ban IN (" . implode(',', $phKeys) . ")";
+    }
+}
+$sql .= " ORDER BY nv.ma_nv";
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
 $dsQuyPhep = $stmt->fetchAll();
 
 function trangThaiQuyPhep($conLai) {
@@ -47,7 +68,7 @@ require __DIR__ . '/includes/header.php';
 ?>
             <section class="data-section">
                 <div class="section-header">
-                    <h3>Thống kê quỹ phép năm <?= htmlspecialchars($namChon) ?></h3>
+                    <h3>Thống kê quỹ phép năm <?= htmlspecialchars($namChon) ?><?= $laTruongPhong ? ' — phòng ban của tôi' : '' ?></h3>
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <form action="quyphepnam.php" method="GET">
                             <select name="nam" onchange="this.form.submit()" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;">
@@ -60,32 +81,49 @@ require __DIR__ . '/includes/header.php';
                     </div>
                 </div>
 
+                <?php if ($laTruongPhong && empty($phongBanQL)): ?>
+                    <p style="background:#fef3c7;color:#d97706;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px;">
+                        Tài khoản của bạn chưa được gán làm Trưởng phòng của phòng ban nào. Liên hệ Admin để được gán.
+                    </p>
+                <?php endif; ?>
                 <?php if (isset($_GET['msg'])): ?>
                     <p style="background:#d1fae5;color:#059669;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px;">Đã cập nhật quỹ phép.</p>
+                <?php endif; ?>
+                <?php if (!$laAdmin): ?>
+                    <p style="background:#eff6ff;color:#3b82f6;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px;">Bạn đang xem ở chế độ chỉ đọc. Chỉ Admin mới có thể điều chỉnh tổng số ngày phép.</p>
                 <?php endif; ?>
 
                 <table class="data-table">
                     <thead>
-                        <tr><th>Mã NV</th><th>Họ và tên</th><th>Phòng ban</th><th>Tổng phép năm</th><th>Đã sử dụng</th><th>Còn lại</th><th>Trạng thái</th><th>Thao tác</th></tr>
+                        <tr><th>Mã NV</th><th>Họ và tên</th><th>Phòng ban</th><th>Tổng phép năm</th><th>Đã sử dụng</th><th>Còn lại</th><th>Trạng thái</th><?php if ($laAdmin): ?><th>Thao tác</th><?php endif; ?></tr>
                     </thead>
                     <tbody>
+                        <?php if (empty($dsQuyPhep)): ?>
+                        <tr><td colspan="<?= $laAdmin ? 8 : 7 ?>" style="text-align:center;color:#94a3b8;">Không có dữ liệu</td></tr>
+                        <?php endif; ?>
                         <?php foreach ($dsQuyPhep as $qp): [$nhan, $mau, $badgeHtml] = trangThaiQuyPhep($qp['con_lai']); ?>
                         <tr>
                             <td><?= htmlspecialchars($qp['ma_nv']) ?></td>
                             <td><?= htmlspecialchars($qp['ho_ten']) ?></td>
                             <td><?= htmlspecialchars($qp['ten_phong_ban'] ?? '--') ?></td>
                             <td>
+                                <?php if ($laAdmin): ?>
                                 <form action="quyphepnam.php?nam=<?= htmlspecialchars($namChon) ?>" method="POST" style="display:flex;gap:6px;align-items:center;">
                                     <input type="hidden" name="id" value="<?= $qp['id'] ?>">
                                     <input type="number" step="0.5" name="tong_phep" value="<?= rtrim(rtrim($qp['tong_phep'],'0'),'.') ?>"
                                            style="width:60px;padding:4px 6px;border:1px solid #cbd5e1;border-radius:4px;"> ngày
                                     <button type="submit" style="border:none;background:none;color:#3b82f6;cursor:pointer;" title="Lưu"><i class="fa-solid fa-floppy-disk"></i></button>
                                 </form>
+                                <?php else: ?>
+                                    <?= rtrim(rtrim($qp['tong_phep'],'0'),'.') ?> ngày
+                                <?php endif; ?>
                             </td>
                             <td><?= rtrim(rtrim($qp['da_su_dung'],'0'),'.') ?> ngày</td>
                             <td><strong style="color:<?= $mau ?>;"><?= rtrim(rtrim($qp['con_lai'],'0'),'.') ?> ngày</strong></td>
                             <td><?= $badgeHtml ?></td>
+                            <?php if ($laAdmin): ?>
                             <td style="color:#94a3b8;font-size:12px;">Sửa số ở cột "Tổng phép năm"</td>
+                            <?php endif; ?>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

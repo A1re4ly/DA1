@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
-yeuCauQuanTri();  // chỉ Admin/HR/Kế toán/Trưởng phòng mới vào được
+yeuCauQuyen('CAUHINH_SUA');  // Admin + Kế toán
 $pageTitle = 'Cấu hình lương - NovaHM';
 
 $loi = '';
