@@ -12,10 +12,10 @@
  * KHÔNG chia sẻ file này hoặc đẩy lên GitHub public.
  */
 
-define('GEMINI_API_KEY', 'AIzaSy_DAN_KEY_CUA_BAN_VAO_DAY');
+define('GEMINI_API_KEY', 'YOUR_GEMINI_API_KEY_HERE');
 
 // Model free-tier ổn định tại thời điểm viết code này.
 // Nếu sau này Google đổi tên model và bạn bị lỗi 404 "model not found",
 // vào https://ai.google.dev/gemini-api/docs/models để lấy tên model free mới nhất
 // rồi thay vào dòng dưới (ví dụ: 'gemini-2.5-flash', 'gemini-2.5-flash-lite'...).
-define('GEMINI_MODEL', 'gemini-2.5-flash');
+define('GEMINI_MODEL', 'gemini-3.8-flash');

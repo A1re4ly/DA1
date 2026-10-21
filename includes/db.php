@@ -1,18 +1,17 @@
 <?php
 /**
  * KẾT NỐI CƠ SỞ DỮ LIỆU - NovaHM
- * Chỉnh 4 dòng cấu hình bên dưới cho khớp với phpMyAdmin/XAMPP của bạn.
- * Mặc định XAMPP: host=localhost, user=root, pass="" (rỗng)
  */
 
-define('DB_HOST', 'localhost');
+define('DB_HOST', '127.0.0.1');
+define('DB_PORT', '3307'); // Cấu hình cổng 3307 theo XAMPP trên máy bạn
 define('DB_NAME', 'novahm_db');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
 try {
     $pdo = new PDO(
-        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+        "mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";charset=utf8mb4",
         DB_USER,
         DB_PASS,
         [
